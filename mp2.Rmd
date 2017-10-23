@@ -1,16 +1,25 @@
 ---
-title: "Mini-Project 2"
-author: "Your Name Here"
-date: "October 31, 2017"
+title: "Mini Project 2"
+author: "Audrey Bertin"
+date: "10/23/2017"
 output: html_document
 ---
+### Loading The Data
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 
+<<<<<<< HEAD
 ## Loading the data
 Data yay!
 ```{r, include=FALSE}
+=======
+library(tidyverse)
+>>>>>>> b178a81590019384ec08f0e35bfdc26c0003366b
 load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
+
 ```
+
