@@ -5,15 +5,8 @@ date: "10/23/2017"
 output: html_document
 ---
 ### Loading The Data
-Data yay! 
-Politics yay!!
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-## Loading the data
 
-```
-
-```{r}
+```{r, message = FALSE}
 library(tidyverse)
 
 load("house_elections.rda")
@@ -21,4 +14,13 @@ load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
 ```
+
+Questions to consider:
+
+How does the size of donations affect the election rate between incumbent/challenger, democrat/republican, house/senate?
+
+Which committees consistently fund republican/democratic candidates?
+
+Which committees see their candidates with the highest election success rates?
+
 
