@@ -6,7 +6,7 @@ output: html_document
 ---
 ### Loading The Data
 Data yay! 
-Politics yay!
+Politics yay!!
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ## Loading the data
