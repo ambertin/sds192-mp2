@@ -5,21 +5,20 @@ date: "10/23/2017"
 output: html_document
 ---
 ### Loading The Data
-
+Data yay! 
+Politics yay!
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
-<<<<<<< HEAD
 ## Loading the data
-Data yay!
-```{r, include=FALSE}
-=======
+
+```
+
+```{r}
 library(tidyverse)
->>>>>>> b178a81590019384ec08f0e35bfdc26c0003366b
+
 load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
-
 ```
 
