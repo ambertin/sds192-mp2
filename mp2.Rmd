@@ -20,8 +20,9 @@ load("individuals.rda")
 ```{r}
 
 donations_to_committees <- committees %>% 
-  inner_join(individuals, by = "cmte_id")
-"
+  inner_join(individuals, by = "cmte_id") %>%
+  select(cmte_id, cmte_name, cmte_party_affiliation, occupation, transaction_amt)
+
 ```
 
 
@@ -36,6 +37,16 @@ occupations <- donations_to_committees %>%
 ```
 
 
+occupation_donations <- function(job) {
+  donations_to_committees %>%
+  filter(occupation == job) %>%
+  group_by(occupation) %>%
+  summarize(total_donated = sum(transaction_amt), avg_donated = mean(transaction_amt), median_donation = median(transaction_amt), num_donations = n())
 
+}
 
+```{r}
+individual_contributions <- contributions %>% inner_join(individuals, by = "cmte_id") %>%
+  select(cmte_id, cmte_name, cmte_party_affiliation, occupation, transaction_amt, cand_id)
+```
 
