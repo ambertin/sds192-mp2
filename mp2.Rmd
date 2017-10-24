@@ -13,12 +13,27 @@ load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
+load("individuals.rda")
 ```
 
-Questions to consider:
 
-How does the size of donations affect the election rate between incumbent/challenger, democrat/republican, house/senate?
+```{r}
 
-Which committees consistently fund republican/democratic candidates?
+donations_to_committees <- committees %>% 
+  inner_join(individuals, by = "cmte_id") %>%
+  select()
+```
 
-Which committees see their candidates with the highest election success rates?
+
+jobs <- c("PHYSICIAN", "ATTORNEY", "EXECUTIVE", "REALTOR", "SMALL BUSINESS OWNER" "TEACHER","NOT EMPLOYED", "HOMEMAKER")
+
+```{r}
+occupations <- donations_to_committees %>%
+  select(occupation) %>%
+  group_by(occupation) %>%
+  summarize(num = n())
+
+```
+
+
+
