@@ -1,6 +1,6 @@
 ---
 title: "Mini Project 2"
-author: "Audrey Bertin"
+author: "Audrey Bertin and Eva Gerstle"
 date: "10/23/2017"
 output: html_document
 ---
@@ -34,12 +34,10 @@ occupations <- donations_to_committees %>%
 
 ```
 
-
-<<<<<<< HEAD
 ```{r}
 individual_contributions <- contributions %>% inner_join(individuals, by = "cmte_id") %>%
   select(cmte_id, cmte_name, cmte_party_affiliation, occupation, transaction_amt, cand_id)
-=======
+
 ### Select some jobs to consider for studying
 ```{r}
 
@@ -50,18 +48,12 @@ jobs <- c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTIO
 ### Calculate the size of donations for each of these occupations
 
 ```{r}
->>>>>>> f588249598451437715b9c08d20714e55e6f0494
 
 occupation_donations <- function(job) {
   donations_to_committees %>%
   filter(occupation == job) %>%
   group_by(occupation) %>%
-<<<<<<< HEAD
   summarize(total_donated = sum(transaction_amt), avg_donated = mean(transaction_amt), median_donation = median(transaction_amt), num_donations = n()) }
-=======
-  summarize(total_donated = sum(transaction_amt), avg_donated = mean(transaction_amt), median_donation = median(transaction_amt), num_donations = n())
-
-}
 
 donations_by_occupations <- lapply(jobs, FUN = occupation_donations) %>% bind_rows()
 
@@ -77,8 +69,7 @@ donations_by_occupations <- donations_by_occupations %>%
 donations_by_occupations$income_level <- factor(donations_by_occupations$income_level, levels = c("$20K-60K", "$60k-100k", "$100K +"))
 
 
->>>>>>> f588249598451437715b9c08d20714e55e6f0494
 ```
-
+#THis is a trial push
 
 
