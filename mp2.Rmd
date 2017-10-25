@@ -57,6 +57,19 @@ occupation_donations <- function(job) {
 
 donations_by_occupations <- lapply(jobs, FUN = occupation_donations) %>% bind_rows()
 
+donations_by_occupations <- mutate(donations_by_occupations, total_donated_millions = total_donated/1000000)
+
+low_income = c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER")
+med_income = c( "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT", "CONTRACTOR")
+high_income = c("CEO", "LAWYER", "EXECUTIVE", "PRESIDENT", "DOCTOR", "ANESTHESIOLOGIST")
+
+donations_by_occupations <- donations_by_occupations %>% 
+  mutate(income_level = ifelse(occupation %in% low_income, "$20K-60K", ifelse(occupation %in% med_income, "$60k-100k", "$100K +")))
+
+donations_by_occupations$income_level <- factor(donations_by_occupations$income_level, levels = c("$20K-60K", "$60k-100k", "$100K +"))
+
+
 ```
+
 
 
