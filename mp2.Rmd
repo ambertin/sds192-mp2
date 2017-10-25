@@ -16,7 +16,7 @@ load("contributions.rda")
 load("individuals.rda")
 ```
 
-
+### Join committees and individual donations to get a list of all donations to each committee
 ```{r}
 
 donations_to_committees <- committees %>% 
@@ -26,8 +26,7 @@ donations_to_committees <- committees %>%
 ```
 
 
-jobs <- c("PHYSICIAN", "ATTORNEY", "EXECUTIVE", "REALTOR", "SMALL BUSINESS OWNER" "TEACHER","NOT EMPLOYED", "HOMEMAKER")
-
+### Create a list of occupations and order them by number so that we can find some popular occupations of different salaries
 ```{r}
 occupations <- donations_to_committees %>%
   select(occupation) %>%
@@ -37,6 +36,17 @@ occupations <- donations_to_committees %>%
 ```
 
 
+### Select some jobs to consider for studying
+```{r}
+
+jobs <- c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER", "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT", "CONTRACTOR", "CEO", "LAWYER", "EXECUTIVE", "PRESIDENT", "DOCTOR", "ANESTHESIOLOGIST")
+
+```
+
+### Calculate the size of donations for each of these occupations
+
+```{r}
+
 occupation_donations <- function(job) {
   donations_to_committees %>%
   filter(occupation == job) %>%
@@ -45,8 +55,8 @@ occupation_donations <- function(job) {
 
 }
 
-```{r}
-individual_contributions <- contributions %>% inner_join(individuals, by = "cmte_id") %>%
-  select(cmte_id, cmte_name, cmte_party_affiliation, occupation, transaction_amt, cand_id)
+donations_by_occupations <- lapply(jobs, FUN = occupation_donations) %>% bind_rows()
+
 ```
+
 
