@@ -16,7 +16,7 @@ load("contributions.rda")
 load("individuals.rda")
 ```
 
-
+### Join committees and individual donations to get a list of all donations to each committee
 ```{r}
 
 donations_to_committees <- committees %>% 
@@ -25,8 +25,7 @@ donations_to_committees <- committees %>%
 ```
 
 
-jobs <- c("PHYSICIAN", "ATTORNEY", "EXECUTIVE", "REALTOR", "SMALL BUSINESS OWNER" "TEACHER","NOT EMPLOYED", "HOMEMAKER")
-
+### Create a list of occupations and order them by number so that we can find some popular occupations of different salaries
 ```{r}
 occupations <- donations_to_committees %>%
   select(occupation) %>%
@@ -36,14 +35,50 @@ occupations <- donations_to_committees %>%
 ```
 
 
+<<<<<<< HEAD
 ```{r}
 individual_contributions <- contributions %>% inner_join(individuals, by = "cmte_id") %>%
   select(cmte_id, cmte_name, cmte_party_affiliation, occupation, transaction_amt, cand_id)
+=======
+### Select some jobs to consider for studying
+```{r}
+
+jobs <- c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER", "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT", "CONTRACTOR", "CEO", "LAWYER", "EXECUTIVE", "PRESIDENT", "DOCTOR", "ANESTHESIOLOGIST")
+
+```
+
+### Calculate the size of donations for each of these occupations
+
+```{r}
+>>>>>>> f588249598451437715b9c08d20714e55e6f0494
 
 occupation_donations <- function(job) {
   donations_to_committees %>%
   filter(occupation == job) %>%
   group_by(occupation) %>%
+<<<<<<< HEAD
   summarize(total_donated = sum(transaction_amt), avg_donated = mean(transaction_amt), median_donation = median(transaction_amt), num_donations = n()) }
+=======
+  summarize(total_donated = sum(transaction_amt), avg_donated = mean(transaction_amt), median_donation = median(transaction_amt), num_donations = n())
+
+}
+
+donations_by_occupations <- lapply(jobs, FUN = occupation_donations) %>% bind_rows()
+
+donations_by_occupations <- mutate(donations_by_occupations, total_donated_millions = total_donated/1000000)
+
+low_income = c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER")
+med_income = c( "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT", "CONTRACTOR")
+high_income = c("CEO", "LAWYER", "EXECUTIVE", "PRESIDENT", "DOCTOR", "ANESTHESIOLOGIST")
+
+donations_by_occupations <- donations_by_occupations %>% 
+  mutate(income_level = ifelse(occupation %in% low_income, "$20K-60K", ifelse(occupation %in% med_income, "$60k-100k", "$100K +")))
+
+donations_by_occupations$income_level <- factor(donations_by_occupations$income_level, levels = c("$20K-60K", "$60k-100k", "$100K +"))
+
+
+>>>>>>> f588249598451437715b9c08d20714e55e6f0494
 ```
+
+
 
