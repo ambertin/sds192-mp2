@@ -6,11 +6,9 @@ output: html_document
 ---
 ### Loading The Data
 
-```{r, message = FALSE}
+```{r, message = FALSE, warning = FALSE}
 library(tidyverse)
 
-load("house_elections.rda")
-load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
 load("individuals.rda")
@@ -18,29 +16,15 @@ load("individuals.rda")
 
 ### Join committees and individual donations to get a list of all donations to each committee
 ```{r}
-
 donations_to_committees <- committees %>% 
   inner_join(individuals, by = "cmte_id") %>%
   select(cmte_id, cmte_name, cmte_party_affiliation, occupation, transaction_amt)
 ```
 
 
-### Create a list of occupations and order them by number so that we can find some popular occupations of different salaries
-```{r}
-occupations <- donations_to_committees %>%
-  select(occupation) %>%
-  group_by(occupation) %>%
-  summarize(num = n())
-
-```
-
-```{r}
-individual_contributions <- contributions %>% inner_join(individuals, by = "cmte_id") %>%
-  select(cmte_id, cmte_name, cmte_party_affiliation, occupation, transaction_amt, cand_id)
-
 ### Select some jobs to consider for studying
-```{r}
 
+```{r}
 jobs <- c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER", "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT", "CONTRACTOR", "CEO", "LAWYER", "EXECUTIVE", "PRESIDENT", "DOCTOR", "ANESTHESIOLOGIST")
 
 ```
@@ -70,6 +54,80 @@ donations_by_occupations$income_level <- factor(donations_by_occupations$income_
 
 
 ```
-#THis is a trial push
+
+
+### Plot total donations by occupation
+```{r}
+
+ggplot(donations_by_occupations, aes(x=reorder(occupation,total_donated_millions), y = total_donated_millions, fill = income_level)) +
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  xlab(NULL) +
+  ylab("Total Donated (Millions of Dollars)") +
+  ggtitle("Total Individual Contributions by Contributer Occupation")
+
+```
+
+### Plot avg donations by occupation
+
+```{r}
+
+ggplot(donations_by_occupations, aes(x=reorder(occupation,total_donated_millions), y = avg_donated, fill = income_level)) +
+  geom_bar(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  xlab(NULL) +
+  ylab("Average Donation (Dollars)") +
+  ggtitle("Average Individual Contributions by Contributer Occupation")
+
+```
+
+
+
+### Find the partisanship by occupation
+```{r}
+
+committees_by_occupation <- function(job) {
+  donations_to_committees %>%
+  filter(occupation == job) %>%
+  group_by(occupation, cmte_name, cmte_id, cmte_party_affiliation) %>%
+  summarize(total_donations = sum(transaction_amt), num_donations = n()) %>%
+  arrange(desc(total_donations))
+
+}
+
+all_committees_by_occupation <- lapply(jobs, FUN = committees_by_occupation) %>% bind_rows()
+
+occupation_partisanship <- all_committees_by_occupation %>%
+  group_by(occupation) %>%
+  summarize(num_democratic = sum(cmte_party_affiliation == "DEM"), num_republican = sum(cmte_party_affiliation == "REP"), favor = ifelse(num_democratic > num_republican, "Dem", "Rep"))
+
+
+occupations_with_partisanship <- donations_by_occupations %>%
+  inner_join(occupation_partisanship, by = "occupation") 
+
+partisanship_gathered <- occupations_with_partisanship %>%
+  select(-favor) %>%
+  rename(D = num_democratic, R = num_republican) %>%
+  gather(key = "party", value = "num_committees", D:R)
+  
+partisanship_gathered$party <- factor(partisanship_gathered$party, levels = c("D", "R"))  
+  
+
+```
+
+
+```{r}
+
+ggplot(partisanship_gathered, aes(x = occupation, y = num_committees, fill = party)) +
+  geom_bar(stat = "identity", position = "Fill") +
+  facet_wrap(~income_level, scales = "free_x") +
+  xlab(NULL) +
+  ylab("Percentage of Committees Supported") +
+  scale_fill_manual(values = c("Blue", "Red")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("Partisanship by Income Level and Occupation")
+
+```
+  
 
 
