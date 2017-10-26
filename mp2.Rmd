@@ -37,7 +37,6 @@ donations_to_committees <- committees %>%
 
 jobs <- c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER", "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT", "CONTRACTOR", "CEO", "LAWYER", "EXECUTIVE", "PRESIDENT", "DOCTOR", "ANESTHESIOLOGIST")
 
-jobs1 <- factor(jobs, levels= c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER","REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT","ANESTHESIOLOGIST","DOCTOR","LAWYER", "CONTRACTOR","CEO", "EXECUTIVE", "PRESIDENT")) 
 
 ```
 
@@ -68,21 +67,12 @@ donations_by_occupations$income_level <- factor(donations_by_occupations$income_
 ```
 #Plot the total sum of donations given by each of the 18 occupations. Find the average and median size of that sum
 ```{r}
-total_plot <- ggplot(donations_by_occupations, aes(x= jobs1, y=total_donated_millions, color = jobs1)) + geom_bar(stat = "identity") +
-theme(axis.text.x = element_text(angle = 90, size = 7), legend.position = "none") + xlab("Occupations") +
-ylab("Total Donations")
+total_plot <- ggplot(donations_by_occupations, aes(x= reorder(occupation,total_donated_millions), y=total_donated_millions, fill= income_level)) + geom_bar(stat = "identity") +
+theme(axis.text.x = element_text(angle = 90, size = 7, hjust = 1)) + xlab(NULL) +
+ylab("Total Donations(In Millions Of Dollars)")
 total_plot
 
-avg_plot <- ggplot(donations_by_occupations, aes(x= jobs1, y=avg_donated, fill = jobs1)) + geom_bar(stat = "identity", color = "black") +
-theme(axis.text.x = element_text(angle = 90, size = 7),legend.position = "none") + xlab("Occupations") +
-ylab("Average Donation")
-avg_plot
 
-median_plot <-ggplot(donations_by_occupations, aes(x= jobs1, y=median_donation, color = jobs1)) + geom_bar(stat = "identity", fill ="white") +
-theme(axis.text.x = element_text(angle = 90, size = 7), legend.position = "none",panel.background = element_rect(fill = "black"),panel.grid.major = element_line(size = 0), panel.grid.minor = element_line(size = 0)) +
-xlab("Occupations") +
-ylab("Median Donation")
-median_plot
+
+ 
 ```
-
-Comparing the median size of the donation by each occupational group with the average size of the donation provides useful insight in the consistency of the size of the donations across the occupation. 
