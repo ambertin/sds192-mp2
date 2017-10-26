@@ -4,6 +4,9 @@ author: "Audrey Bertin and Eva Gerstle"
 date: "10/23/2017"
 output: html_document
 ---
+
+We analyzed political donations over 200 dollars made by individuals to committees. It is important to note that individuals do not donate directly to a party or a candidate but rather to a political committee, which are often associated with a party and/or candidate. In our investigation, we looked at individuals who have certain occupations. We selected 18 common occupations, six that are relatively low income (20,000-60,000 a year), six middle income (60,000-100,000), and six high income (100,000 +). The data is from the 2012 federal election cycle and is provided by the Federal Election Commission. First we looked at the average and median size of the donation by occupation type, regardless of which candidate or party the donation was going to. Next we looked at which party those donations are going to. We looked only at the committees that are associated with one of the two major political parties. Below are the occupations, and their respective financial support for each of the two major political parties. 
+
 ### Loading The Data
 
 ```{r, message = FALSE, warning = FALSE}
@@ -16,15 +19,19 @@ load("individuals.rda")
 
 ### Join committees and individual donations to get a list of all donations to each committee
 ```{r}
-donations_to_committees <- committees %>% 
-  inner_join(individuals, by = "cmte_id") %>%
-  select(cmte_id, cmte_name, cmte_party_affiliation, occupation, transaction_amt)
-```
 
+selected_individuals <- individuals %>%
+  select(occupation, transaction_amt)
+
+donations_to_committees <- committees %>% 
+  select(cmte_id, cmte_name, cmte_party_affiliation) %>%
+  inner_join(individuals, by = "cmte_id") 
+```
 
 ### Select some jobs to consider for studying
 
 ```{r}
+
 jobs <- c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER", "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT", "CONTRACTOR", "CEO", "LAWYER", "EXECUTIVE", "PRESIDENT", "DOCTOR", "ANESTHESIOLOGIST")
 
 ```
@@ -56,78 +63,32 @@ donations_by_occupations$income_level <- factor(donations_by_occupations$income_
 ```
 
 
-### Plot total donations by occupation
+
+#Plot the total sum of donations given by each of the 18 occupations. 
 ```{r}
 
-ggplot(donations_by_occupations, aes(x=reorder(occupation,total_donated_millions), y = total_donated_millions, fill = income_level)) +
+total_plot <- ggplot(donations_by_occupations, aes(x= reorder(occupation,total_donated_millions), y=total_donated_millions, fill= income_level)) + geom_bar(stat = "identity") +
+theme(axis.text.x = element_text(angle = 90, size = 7, hjust = 1)) + xlab(NULL) +
+ylab("Total Donations (In Millions Of Dollars)")
+
+total_plot
+
+
+```
+
+
+### Plot median donations by occupation
+
+```{r}
+
+median_plot <- ggplot(donations_by_occupations, aes(x=reorder(occupation,total_donated_millions), y = median_donation, fill = income_level)) +
   geom_bar(stat = "identity") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   xlab(NULL) +
-  ylab("Total Donated (Millions of Dollars)") +
-  ggtitle("Total Individual Contributions by Contributer Occupation")
+  ylab("Median Donation (Dollars)") +
+  ggtitle("Median Individual Contributions by Contributer Occupation")
+
+median_plot
 
 ```
-
-### Plot avg donations by occupation
-
-```{r}
-
-ggplot(donations_by_occupations, aes(x=reorder(occupation,total_donated_millions), y = avg_donated, fill = income_level)) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  xlab(NULL) +
-  ylab("Average Donation (Dollars)") +
-  ggtitle("Average Individual Contributions by Contributer Occupation")
-
-```
-
-
-
-### Find the partisanship by occupation
-```{r}
-
-committees_by_occupation <- function(job) {
-  donations_to_committees %>%
-  filter(occupation == job) %>%
-  group_by(occupation, cmte_name, cmte_id, cmte_party_affiliation) %>%
-  summarize(total_donations = sum(transaction_amt), num_donations = n()) %>%
-  arrange(desc(total_donations))
-
-}
-
-all_committees_by_occupation <- lapply(jobs, FUN = committees_by_occupation) %>% bind_rows()
-
-occupation_partisanship <- all_committees_by_occupation %>%
-  group_by(occupation) %>%
-  summarize(num_democratic = sum(cmte_party_affiliation == "DEM"), num_republican = sum(cmte_party_affiliation == "REP"), favor = ifelse(num_democratic > num_republican, "Dem", "Rep"))
-
-
-occupations_with_partisanship <- donations_by_occupations %>%
-  inner_join(occupation_partisanship, by = "occupation") 
-
-partisanship_gathered <- occupations_with_partisanship %>%
-  select(-favor) %>%
-  rename(D = num_democratic, R = num_republican) %>%
-  gather(key = "party", value = "num_committees", D:R)
-  
-partisanship_gathered$party <- factor(partisanship_gathered$party, levels = c("D", "R"))  
-  
-
-```
-
-
-```{r}
-
-ggplot(partisanship_gathered, aes(x = occupation, y = num_committees, fill = party)) +
-  geom_bar(stat = "identity", position = "Fill") +
-  facet_wrap(~income_level, scales = "free_x") +
-  xlab(NULL) +
-  ylab("Percentage of Committees Supported") +
-  scale_fill_manual(values = c("Blue", "Red")) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  ggtitle("Partisanship by Income Level and Occupation")
-
-```
-  
-
 
