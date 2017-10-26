@@ -69,7 +69,7 @@ donations_by_occupations$income_level <- factor(donations_by_occupations$income_
 
 total_plot <- ggplot(donations_by_occupations, aes(x= reorder(occupation,total_donated_millions), y=total_donated_millions, fill= income_level)) + geom_bar(stat = "identity") +
 theme(axis.text.x = element_text(angle = 90, size = 7, hjust = 1)) + xlab(NULL) +
-ylab("Total Donations (In Millions Of Dollars)")
+ylab("Total Donations (In Millions Of Dollars)") + scale_fill_discrete(name= "Income Level", breaks = c("$20K-60K", "$60k-100k", "$100K +"), labels = c("$20K-60K", "$60k-100k", "$100K +")) + ggtitle("Total Donations by Occupation")
 
 total_plot
 
@@ -83,10 +83,10 @@ total_plot
 
 median_plot <- ggplot(donations_by_occupations, aes(x=reorder(occupation,total_donated_millions), y = median_donation, fill = income_level)) +
   geom_bar(stat = "identity") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1) ) + scale_fill_discrete(name= "Income Level", breaks = c("$20K-60K", "$60k-100k", "$100K +"), labels = c("$20K-60K", "$60k-100k", "$100K +")) +
   xlab(NULL) +
-  ylab("Median Donation (Dollars)") +
-  ggtitle("Median Individual Contributions by Contributer Occupation")
+  ylab("Median Donation (Dollars)")+
+  ggtitle("Median Individual Contributions by Occupation")
 
 median_plot
 
@@ -135,7 +135,8 @@ ggplot(partisanship_gathered, aes(x = occupation, y = num_committees, fill = par
   ylab("Percentage of Committees Supported") +
   scale_fill_manual(values = c("Blue", "Red")) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  ggtitle("Partisanship by Income Level and Occupation")
+  ggtitle("Individual Donations by Income Level and Occupation") +
+  scale_fill_discrete(name= "Committee Affiliation", breaks = c("D","R"), labels = c("Democratic", "Republican"))
 
 ```
   
