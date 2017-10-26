@@ -4,7 +4,9 @@ author: "Audrey Bertin and Eva Gerstle"
 date: "10/23/2017"
 output: html_document
 ---
-### Loading The Data
+
+We analyzed political donations made by individuals to committees. It is important to note that individuals do not donate directly to a party or a candidate but rather to a political committee, which are often associated with a party and/or candidate. In our investigation, we looked at individuals who have certain occupations. We selected 18 common occupations, six that are relatively low income (20,000-60,000 a year), six middle income (60,000-100,000), and six high income (100,000 +). The data is from the 2012 federal election cycle and is provided by the Federal Election Commission. First we looked at the average and median size of the donation by occupation type, regardless of which candidate or party the donation was going to. Next we looked at which party those donations are going to. We looked only at the committees that are associated with one of the two major political parties. Below are the occupations, and their respective financial support for each of the two major political parties. 
+# Loading The Data
 
 ```{r, message = FALSE}
 library(tidyverse)
@@ -18,30 +20,24 @@ load("individuals.rda")
 
 ### Join committees and individual donations to get a list of all donations to each committee
 ```{r}
+selected_individuals <- individuals %>%
+  select(occupation, transaction_amt)
 
 donations_to_committees <- committees %>% 
-  inner_join(individuals, by = "cmte_id") %>%
-  select(cmte_id, cmte_name, cmte_party_affiliation, occupation, transaction_amt)
+  select(cmte_id, cmte_name, cmte_party_affiliation) %>%
+  inner_join(individuals, by = "cmte_id") 
 ```
 
 
-### Create a list of occupations and order them by number so that we can find some popular occupations of different salaries
-```{r}
-occupations <- donations_to_committees %>%
-  select(occupation) %>%
-  group_by(occupation) %>%
-  summarize(num = n())
+### Create a list of occupations that we are interested in and order them in the order we will plot them in.
 
-```
 
 ```{r}
-individual_contributions <- contributions %>% inner_join(individuals, by = "cmte_id") %>%
-  select(cmte_id, cmte_name, cmte_party_affiliation, occupation, transaction_amt, cand_id)
 
-### Select some jobs to consider for studying
-```{r}
 
 jobs <- c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER", "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT", "CONTRACTOR", "CEO", "LAWYER", "EXECUTIVE", "PRESIDENT", "DOCTOR", "ANESTHESIOLOGIST")
+
+jobs1 <- factor(jobs, levels= c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER","REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT","ANESTHESIOLOGIST","DOCTOR","LAWYER", "CONTRACTOR","CEO", "EXECUTIVE", "PRESIDENT")) 
 
 ```
 
@@ -70,6 +66,23 @@ donations_by_occupations$income_level <- factor(donations_by_occupations$income_
 
 
 ```
-#THis is a trial push
+#Plot the total sum of donations given by each of the 18 occupations. Find the average and median size of that sum
+```{r}
+total_plot <- ggplot(donations_by_occupations, aes(x= jobs1, y=total_donated_millions, color = jobs1)) + geom_bar(stat = "identity") +
+theme(axis.text.x = element_text(angle = 90, size = 7), legend.position = "none") + xlab("Occupations") +
+ylab("Total Donations")
+total_plot
 
+avg_plot <- ggplot(donations_by_occupations, aes(x= jobs1, y=avg_donated, fill = jobs1)) + geom_bar(stat = "identity", color = "black") +
+theme(axis.text.x = element_text(angle = 90, size = 7),legend.position = "none") + xlab("Occupations") +
+ylab("Average Donation")
+avg_plot
 
+median_plot <-ggplot(donations_by_occupations, aes(x= jobs1, y=median_donation, color = jobs1)) + geom_bar(stat = "identity", fill ="white") +
+theme(axis.text.x = element_text(angle = 90, size = 7), legend.position = "none",panel.background = element_rect(fill = "black"),panel.grid.major = element_line(size = 0), panel.grid.minor = element_line(size = 0)) +
+xlab("Occupations") +
+ylab("Median Donation")
+median_plot
+```
+
+Comparing the median size of the donation by each occupational group with the average size of the donation provides useful insight in the consistency of the size of the donations across the occupation. 
