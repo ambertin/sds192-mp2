@@ -92,3 +92,55 @@ median_plot
 
 ```
 
+
+### Find the partisanship by occupation
+```{r}
+
+committees_by_occupation <- function(job) {
+  donations_to_committees %>%
+  filter(occupation == job) %>%
+  group_by(occupation, cmte_name, cmte_id, cmte_party_affiliation) %>%
+  summarize(total_donations = sum(transaction_amt), num_donations = n()) %>%
+  arrange(desc(total_donations))
+
+}
+
+all_committees_by_occupation <- lapply(jobs, FUN = committees_by_occupation) %>% bind_rows()
+
+occupation_partisanship <- all_committees_by_occupation %>%
+  group_by(occupation) %>%
+  summarize(num_democratic = sum(cmte_party_affiliation == "DEM"), num_republican = sum(cmte_party_affiliation == "REP"), favor = ifelse(num_democratic > num_republican, "Dem", "Rep"))
+
+
+occupations_with_partisanship <- donations_by_occupations %>%
+  inner_join(occupation_partisanship, by = "occupation") 
+
+partisanship_gathered <- occupations_with_partisanship %>%
+  select(-favor) %>%
+  rename(D = num_democratic, R = num_republican) %>%
+  gather(key = "party", value = "num_committees", D:R)
+  
+partisanship_gathered$party <- factor(partisanship_gathered$party, levels = c("D", "R"))  
+  
+
+```
+
+
+```{r}
+
+ggplot(partisanship_gathered, aes(x = occupation, y = num_committees, fill = party)) +
+  geom_bar(stat = "identity", position = "Fill") +
+  facet_wrap(~income_level, scales = "free_x") +
+  xlab(NULL) +
+  ylab("Percentage of Committees Supported") +
+  scale_fill_manual(values = c("Blue", "Red")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("Partisanship by Income Level and Occupation")
+
+```
+  
+
+
+
+
+
