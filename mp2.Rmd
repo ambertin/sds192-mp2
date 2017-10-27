@@ -5,19 +5,17 @@ date: "10/23/2017"
 output: html_document
 ---
 
-<<<<<<< HEAD
-=======
 Political campaigns have many expenditures they must account for, including travel cost for candidates and staff, consulting/campaign advising, and of course advertising. For some campaigns, particularly high profile senate seats and presidential elections, these things are quite costly, and candidates have to find a way to raise money so that they can afford to keep their campaign going. A large portion of this money is collected through donations from individual citizens. Citizens can donate to committees, which then spend money on behalf of or against candidates.
 
 For this project, we were interested in determining how donations to campaigns varied by the individual’s occupation and income level. Several specific questions we were interested in were: 
 
-• 1) While individuals in higher income jobs are expected across the board to donate a higher total amount to campaigns (e.g. ALL doctors combined will donate more than ALL social workers combined), but how does the median individual donation compare across occupations?  Do their donations still appear as significant after accounting for income level? 
+• 1) While individuals in higher income jobs are expected across the board to donate a higher total amount to campaigns (e.g. ALL doctors combined will donate more than ALL social workers combined), but how does the median individual donation compare across occupations?  Do their donations still appear as significant after considering income level? 
 
 • 2) Do individuals across different income levels tend to prefer certain political parties (e.g. do wealthy people as a whole donate to a different proportion of democratic/republican candidates than less-wealthy people), and is there significant variance in partisanship within an income level due to the type of occupation one is in?
 
 To try and answer these questions, we analyzed political donations over 200 dollars made by individuals to committees. We selected 18 common occupations to consider: six that are relatively low income (20,000-60,000 a year), six middle income (60,000-100,000), and six high income (100,000 +). First we looked at the average and median size of the donation by occupation type, regardless of which candidate or party the donation was going to. Next we looked at which party those donations are going to. We looked only at the committees that are associated with one of the two major political parties–Democratic and Republican. Below are the occupations, and their respective financial support for each of the two major political parties. 
 
->>>>>>> c81168d82c65ff53ad8b89b5afba8b2d728ed775
+
 
 ### Loading The Data
 
@@ -88,6 +86,8 @@ donations_by_occupations$income_level <- factor(donations_by_occupations$income_
 
 
 #Plot the total sum of donations given by each of the 18 occupations. 
+
+In the plot below, we look at the total amount donated by each occupation in the 2012 election cycle. We found this plot to be useful in displaying the scale of money donated but recognize that different numbers of individuals donated in different occupations. Thus this plot does not show us much about the individual contributions themselves. 
 ```{r}
 
 total_plot <- ggplot(donations_by_occupations, aes(x= reorder(occupation,total_donated_millions), y=total_donated_millions, fill= income_level)) + geom_bar(stat = "identity") +
@@ -101,6 +101,7 @@ total_plot
 
 
 ### Plot median donations by occupation
+In the graph below we looked at the median individual donation across several occupations. We chose to use median rather than mean because we felt that the data was strongly impacted by outliers (specifically large donaters outliers) and we know that median is less effected by outliers. 
 
 ```{r}
 
@@ -165,11 +166,7 @@ ggplot(partisanship_gathered, aes(x = occupation, y = num_committees, fill = par
   geom_bar(stat = "identity", position = "Fill") +
   facet_wrap(~income_level, scales = "free_x") +
   xlab(NULL) +
-<<<<<<< HEAD
-  ylab("Percentage of Committees Supported")  +
-=======
-  ylab("Percentage of Committees Supported") +
->>>>>>> c81168d82c65ff53ad8b89b5afba8b2d728ed775
+ ylab("Percentage of Committees Supported") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   ggtitle("Individual Donations by Income Level and Occupation") +
   scale_fill_manual(values = c("Blue", "Red"),name= "Committee Affiliation", breaks = c("D","R"), labels = c("Democratic", "Republican"))
