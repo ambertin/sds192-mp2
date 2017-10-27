@@ -5,6 +5,19 @@ date: "10/23/2017"
 output: html_document
 ---
 
+<<<<<<< HEAD
+=======
+Political campaigns have many expenditures they must account for, including travel cost for candidates and staff, consulting/campaign advising, and of course advertising. For some campaigns, particularly high profile senate seats and presidential elections, these things are quite costly, and candidates have to find a way to raise money so that they can afford to keep their campaign going. A large portion of this money is collected through donations from individual citizens. Citizens can donate to committees, which then spend money on behalf of or against candidates.
+
+For this project, we were interested in determining how donations to campaigns varied by the individual’s occupation and income level. Several specific questions we were interested in were: 
+
+• 1) While individuals in higher income jobs are expected across the board to donate a higher total amount to campaigns (e.g. ALL doctors combined will donate more than ALL social workers combined), but how does the median individual donation compare across occupations?  Do their donations still appear as significant after accounting for income level? 
+
+• 2) Do individuals across different income levels tend to prefer certain political parties (e.g. do wealthy people as a whole donate to a different proportion of democratic/republican candidates than less-wealthy people), and is there significant variance in partisanship within an income level due to the type of occupation one is in?
+
+To try and answer these questions, we analyzed political donations over 200 dollars made by individuals to committees. We selected 18 common occupations to consider: six that are relatively low income (20,000-60,000 a year), six middle income (60,000-100,000), and six high income (100,000 +). First we looked at the average and median size of the donation by occupation type, regardless of which candidate or party the donation was going to. Next we looked at which party those donations are going to. We looked only at the committees that are associated with one of the two major political parties–Democratic and Republican. Below are the occupations, and their respective financial support for each of the two major political parties. 
+
+>>>>>>> c81168d82c65ff53ad8b89b5afba8b2d728ed775
 
 ### Loading The Data
 
@@ -19,12 +32,15 @@ load("individuals.rda")
 ### Join committees and individual donations to get a list of all donations to each committee
 ```{r}
 
-selected_individuals <- individuals %>%
+selected_individuals <- individuals %>% 
   select(occupation, transaction_amt)
 
 donations_to_committees <- committees %>% 
   select(cmte_id, cmte_name, cmte_party_affiliation) %>%
   inner_join(individuals, by = "cmte_id") 
+
+#Selecting before joining here in order to speed up the knitting process
+
 ```
 
 ### Select some jobs to consider for studying
@@ -43,21 +59,29 @@ occupation_donations <- function(job) {
   donations_to_committees %>%
   filter(occupation == job) %>%
   group_by(occupation) %>%
-  summarize(total_donated = sum(transaction_amt), avg_donated = mean(transaction_amt), median_donation = median(transaction_amt), num_donations = n()) }
+  summarize(
+    total_donated = sum(transaction_amt),
+    avg_donated = mean(transaction_amt),
+    median_donation = median(transaction_amt),
+    num_donations = n())
+}
+
+#This function calculates information about all donations given to committees by individuals in any given occupation
 
 donations_by_occupations <- lapply(jobs, FUN = occupation_donations) %>% bind_rows()
 
 donations_by_occupations <- mutate(donations_by_occupations, total_donated_millions = total_donated/1000000)
 
-low_income = c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER")
-med_income = c( "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT", "CONTRACTOR")
-high_income = c("CEO", "LAWYER", "EXECUTIVE", "PRESIDENT", "DOCTOR", "ANESTHESIOLOGIST")
+#The addition of the millions column is just so that the graph we use later will be easier to read.
+
+low_income = c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER") #20K-60K avg income
+med_income = c( "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT", "CONTRACTOR") #60K-100K avg income
+high_income = c("CEO", "LAWYER", "EXECUTIVE", "PRESIDENT", "DOCTOR", "ANESTHESIOLOGIST") #100k+ avg income
 
 donations_by_occupations <- donations_by_occupations %>% 
-  mutate(income_level = ifelse(occupation %in% low_income, "$20K-60K", ifelse(occupation %in% med_income, "$60k-100k", "$100K +")))
+  mutate(income_level = ifelse(occupation %in% low_income, "$20K-60K", ifelse(occupation %in% med_income, "$60k-100k", "$100K +"))) #Add a new column that designates the income level of each occupation
 
-donations_by_occupations$income_level <- factor(donations_by_occupations$income_level, levels = c("$20K-60K", "$60k-100k", "$100K +"))
-
+donations_by_occupations$income_level <- factor(donations_by_occupations$income_level, levels = c("$20K-60K", "$60k-100k", "$100K +")) #Give the income levels a rank according to value instead of alphabetical order
 
 ```
 
@@ -89,6 +113,8 @@ median_plot <- ggplot(donations_by_occupations, aes(x=reorder(occupation,total_d
 
 median_plot
 
+#Note that this plot was ordered by total_donated_millions so that the occupations would be in the same order as in the last plot, and it would be clear which occupations had relatively high average donations compared to their total donations.
+
 ```
 
 
@@ -104,6 +130,8 @@ committees_by_occupation <- function(job) {
 
 }
 
+#This function finds all party-affiliated committees that each occupation donated to
+
 all_committees_by_occupation <- lapply(jobs, FUN = committees_by_occupation) %>% bind_rows()
 all_committees_by_occupation 
 
@@ -111,28 +139,37 @@ occupation_partisanship <- all_committees_by_occupation %>%
   group_by(occupation) %>%
   summarize(num_democratic = sum(cmte_party_affiliation == "DEM"), num_republican = sum(cmte_party_affiliation == "REP"), favor = ifelse(num_democratic > num_republican, "Dem", "Rep"))
 
+#Here, we find how many of those committees were Dem and Rep to determine which party each occupation favors and the numerical distribution showing that.
 
 occupations_with_partisanship <- donations_by_occupations %>%
   inner_join(occupation_partisanship, by = "occupation") 
+
+#We join the earlier information about donation size by occupation to donation partisanship so that all the info about each occupation is contained in one place
 
 partisanship_gathered <- occupations_with_partisanship %>%
   select(-favor) %>%
   rename(D = num_democratic, R = num_republican) %>%
   gather(key = "party", value = "num_committees", D:R)
+
+#Since we originally had to create two columns in the mutate function to count the numbers of dem and rep parties, we have to use a gather here to make the data tidy and plottable.
   
 partisanship_gathered$party <- factor(partisanship_gathered$party, levels = c("D", "R"))  
   
 
 ```
 
-
+### Plot the partisanship by occupation
 ```{r}
 
 ggplot(partisanship_gathered, aes(x = occupation, y = num_committees, fill = party)) +
   geom_bar(stat = "identity", position = "Fill") +
   facet_wrap(~income_level, scales = "free_x") +
   xlab(NULL) +
+<<<<<<< HEAD
   ylab("Percentage of Committees Supported")  +
+=======
+  ylab("Percentage of Committees Supported") +
+>>>>>>> c81168d82c65ff53ad8b89b5afba8b2d728ed775
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   ggtitle("Individual Donations by Income Level and Occupation") +
   scale_fill_manual(values = c("Blue", "Red"),name= "Committee Affiliation", breaks = c("D","R"), labels = c("Democratic", "Republican"))
