@@ -5,7 +5,6 @@ date: "10/23/2017"
 output: html_document
 ---
 
-We analyzed political donations over 200 dollars made by individuals to committees. It is important to note that individuals do not donate directly to a party or a candidate but rather to a political committee, which are often associated with a party and/or candidate. In our investigation, we looked at individuals who have certain occupations. We selected 18 common occupations, six that are relatively low income (20,000-60,000 a year), six middle income (60,000-100,000), and six high income (100,000 +). The data is from the 2012 federal election cycle and is provided by the Federal Election Commission. First we looked at the average and median size of the donation by occupation type, regardless of which candidate or party the donation was going to. Next we looked at which party those donations are going to. We looked only at the committees that are associated with one of the two major political parties. Below are the occupations, and their respective financial support for each of the two major political parties. 
 
 ### Loading The Data
 
@@ -106,6 +105,7 @@ committees_by_occupation <- function(job) {
 }
 
 all_committees_by_occupation <- lapply(jobs, FUN = committees_by_occupation) %>% bind_rows()
+all_committees_by_occupation 
 
 occupation_partisanship <- all_committees_by_occupation %>%
   group_by(occupation) %>%
@@ -132,11 +132,10 @@ ggplot(partisanship_gathered, aes(x = occupation, y = num_committees, fill = par
   geom_bar(stat = "identity", position = "Fill") +
   facet_wrap(~income_level, scales = "free_x") +
   xlab(NULL) +
-  ylab("Percentage of Committees Supported") +
-  scale_fill_manual(values = c("Blue", "Red")) +
+  ylab("Percentage of Committees Supported")  +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   ggtitle("Individual Donations by Income Level and Occupation") +
-  scale_fill_discrete(name= "Committee Affiliation", breaks = c("D","R"), labels = c("Democratic", "Republican"))
+  scale_fill_manual(values = c("Blue", "Red"),name= "Committee Affiliation", breaks = c("D","R"), labels = c("Democratic", "Republican"))
 
 ```
   
