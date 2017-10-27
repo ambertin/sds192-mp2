@@ -5,7 +5,16 @@ date: "10/23/2017"
 output: html_document
 ---
 
-We analyzed political donations over 200 dollars made by individuals to committees. It is important to note that individuals do not donate directly to a party or a candidate but rather to a political committee, which are often associated with a party and/or candidate. In our investigation, we looked at individuals who have certain occupations. We selected 18 common occupations, six that are relatively low income (20,000-60,000 a year), six middle income (60,000-100,000), and six high income (100,000 +). The data is from the 2012 federal election cycle and is provided by the Federal Election Commission. First we looked at the average and median size of the donation by occupation type, regardless of which candidate or party the donation was going to. Next we looked at which party those donations are going to. We looked only at the committees that are associated with one of the two major political parties. Below are the occupations, and their respective financial support for each of the two major political parties. 
+Political campaigns have many expenditures they must account for, including travel cost for candidates and staff, consulting/campaign advising, and of course advertising. For some campaigns, particularly high profile senate seats and presidential elections, these things are quite costly, and candidates have to find a way to raise money so that they can afford to keep their campaign going. A large portion of this money is collected through donations from individual citizens. Citizens can donate to committees, which then spend money on behalf of or against candidates.
+
+For this project, we were interested in determining how donations to campaigns varied by the individual’s occupation and income level. Several specific questions we were interested in were: 
+
+• 1) While individuals in higher income jobs are expected across the board to donate a higher total amount to campaigns (e.g. ALL doctors combined will donate more than ALL social workers combined), but how does the median individual donation compare across occupations?  Do their donations still appear as significant after accounting for income level? 
+
+• 2) Do individuals across different income levels tend to prefer certain political parties (e.g. do wealthy people as a whole donate to a different proportion of democratic/republican candidates than less-wealthy people), and is there significant variance in partisanship within an income level due to the type of occupation one is in?
+
+To try and answer these questions, we analyzed political donations over 200 dollars made by individuals to committees. We selected 18 common occupations to consider: six that are relatively low income (20,000-60,000 a year), six middle income (60,000-100,000), and six high income (100,000 +). First we looked at the average and median size of the donation by occupation type, regardless of which candidate or party the donation was going to. Next we looked at which party those donations are going to. We looked only at the committees that are associated with one of the two major political parties–Democratic and Republican. Below are the occupations, and their respective financial support for each of the two major political parties. 
+
 
 ### Loading The Data
 
