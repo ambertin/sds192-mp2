@@ -117,7 +117,7 @@ median_plot
 #Note that this plot was ordered by total_donated_millions so that the occupations would be in the same order as in the last plot, and it would be clear which occupations had relatively high average donations compared to their total donations.
 
 ```
-
+Across the occupations, there is much less variation in the median contribution than in total contributions. However, still several high income ($100k) occupations have median higher donations. 
 
 ### Find the partisanship by occupation
 ```{r}
@@ -160,6 +160,7 @@ partisanship_gathered$party <- factor(partisanship_gathered$party, levels = c("D
 ```
 
 ### Plot the partisanship by occupation
+Here we graphed the partisanship of donations by occupation held by donator. We were interested in seeing whether certian jobs were linked with more Republican or Democratic support. 
 ```{r}
 
 ggplot(partisanship_gathered, aes(x = occupation, y = num_committees, fill = party)) +
@@ -172,7 +173,7 @@ ggplot(partisanship_gathered, aes(x = occupation, y = num_committees, fill = par
   scale_fill_manual(values = c("Blue", "Red"),name= "Committee Affiliation", breaks = c("D","R"), labels = c("Democratic", "Republican"))
 
 ```
-  
+We found that specific occupations tended to be more Democratic in their donations such as Social Workers and Software Engineers. As for tending more Republican (at least in the way they spend their money) we have Constrution Workers, Ranchers, and Anesthesiologists. However, we cannot conclude anything about the partisanship of different income brackets, but if we looked at more occupations perhaps such a conclusion could be drawn.
 
 
 
