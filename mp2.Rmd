@@ -15,6 +15,8 @@ For this project, we were interested in determining how donations to campaigns v
 
 To try and answer these questions, we analyzed political donations over 200 dollars made by individuals to committees. We selected 18 common occupations to consider: six that are relatively low income (20,000-60,000 a year), six middle income (60,000-100,000), and six high income (100,000 +). First we looked at the average and median size of the donation by occupation type, regardless of which candidate or party the donation was going to. Next we looked at which party those donations are going to. We looked only at the committees that are associated with one of the two major political parties–Democratic and Republican. Below are the occupations, and their respective financial support for each of the two major political parties. 
 
+We placed the occupations within three income brackets (20k-60k, 60k-100k, 100k+) according to each occupation’s average annual salary as recorded by the May 2012 National Occupational Employment and Wage Estimates. This data is collected by the [Bureau of Labor Statistics](https://www.bls.gov/oes/2012/may/oes_nat.htm). 
+
 
 
 ### Loading The Data
@@ -45,7 +47,7 @@ donations_to_committees <- committees %>%
 
 ```{r}
 
-jobs <- c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER", "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT", "CONTRACTOR", "CEO", "LAWYER", "EXECUTIVE", "PRESIDENT", "DOCTOR", "ANESTHESIOLOGIST")
+jobs <- c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "WAITER", "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "POLICE OFFICER", "CONTRACTOR", "CEO", "LAWYER", "EXECUTIVE", "ENGINEER", "DOCTOR", "ANESTHESIOLOGIST", "POLICE OFFICER")
 
 ```
 
@@ -64,6 +66,7 @@ occupation_donations <- function(job) {
     num_donations = n())
 }
 
+
 #This function calculates information about all donations given to committees by individuals in any given occupation
 
 donations_by_occupations <- lapply(jobs, FUN = occupation_donations) %>% bind_rows()
@@ -72,9 +75,9 @@ donations_by_occupations <- mutate(donations_by_occupations, total_donated_milli
 
 #The addition of the millions column is just so that the graph we use later will be easier to read.
 
-low_income = c("REGISTERED NURSE", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER") #20K-60K avg income
-med_income = c( "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "CONSULTANT", "CONTRACTOR") #60K-100K avg income
-high_income = c("CEO", "LAWYER", "EXECUTIVE", "PRESIDENT", "DOCTOR", "ANESTHESIOLOGIST") #100k+ avg income
+low_income = c("POLICE OFFICER", "TEACHER", "SOCIAL WORKER", "FARMER", "CONSTRUCTION", "RANCHER") #20K-60K avg income
+med_income = c( "REAL ESTATE", "ACCOUNTANT", "SOFTWARE ENGINEER", "MARKETING", "REGISTERED NURSE", "CONTRACTOR") #60K-100K avg income
+high_income = c("CEO", "LAWYER", "EXECUTIVE", "ENGINEER", "DOCTOR", "ANESTHESIOLOGIST") #100k+ avg income
 
 donations_by_occupations <- donations_by_occupations %>% 
   mutate(income_level = ifelse(occupation %in% low_income, "$20K-60K", ifelse(occupation %in% med_income, "$60k-100k", "$100K +"))) #Add a new column that designates the income level of each occupation
@@ -165,6 +168,7 @@ Here we graphed the partisanship of donations by occupation held by donator. We 
 
 ggplot(partisanship_gathered, aes(x = occupation, y = num_committees, fill = party)) +
   geom_bar(stat = "identity", position = "Fill") +
+  geom_hline(yintercept = 0.5)+ 
   facet_wrap(~income_level, scales = "free_x") +
   xlab(NULL) +
  ylab("Percentage of Committees Supported") +
@@ -173,6 +177,7 @@ ggplot(partisanship_gathered, aes(x = occupation, y = num_committees, fill = par
   scale_fill_manual(values = c("Blue", "Red"),name= "Committee Affiliation", breaks = c("D","R"), labels = c("Democratic", "Republican"))
 
 ```
+
 We found that specific occupations tended to be more Democratic in their donations such as Social Workers and Software Engineers. As for tending more Republican (at least in the way they spend their money) we have Constrution Workers, Ranchers, and Anesthesiologists. However, we cannot conclude anything about the partisanship of different income brackets, but if we looked at more occupations perhaps such a conclusion could be drawn.
 
 
