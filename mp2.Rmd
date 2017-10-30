@@ -90,7 +90,7 @@ donations_by_occupations$income_level <- factor(donations_by_occupations$income_
 
 #Plot the total sum of donations given by each of the 18 occupations. 
 
-In the plot below, we look at the total amount donated by each occupation in the 2012 election cycle. We found this plot to be useful in displaying the scale of money donated but recognize that different numbers of individuals donated in different occupations. Thus this plot does not show us much about the individual contributions themselves. 
+In the plot below, we look at the total amount donated by each occupation in the 2012 election cycle. We found this plot to be useful in displaying the scale of money donated but recognize that different numbers of individuals donated in different occupations. Thus this plot does not show us much about the individual contributions themselves, but does give insight into which occupations have the largest monetary effect on candidate fundraising. 
 ```{r}
 
 total_plot <- ggplot(donations_by_occupations, aes(x= reorder(occupation,total_donated_millions), y=total_donated_millions, fill= income_level)) + geom_bar(stat = "identity") +
@@ -104,7 +104,7 @@ total_plot
 
 
 ### Plot median donations by occupation
-In the graph below we looked at the median individual donation across several occupations. We chose to use median rather than mean because we felt that the data was strongly impacted by outliers (specifically large donaters outliers) and we know that median is less effected by outliers. 
+In the graph below we looked at the median individual donation across several occupations. We chose to use median rather than mean because we felt that the data was strongly impacted by outliers (specifically large donators) and we know that median is less affected by outliers. 
 
 ```{r}
 
@@ -120,7 +120,7 @@ median_plot
 #Note that this plot was ordered by total_donated_millions so that the occupations would be in the same order as in the last plot, and it would be clear which occupations had relatively high average donations compared to their total donations.
 
 ```
-Across the occupations, there is much less variation in the median contribution than in total contributions. However, still several high income ($100k) occupations have median higher donations. 
+Across the occupations, there is much less variation in the median contribution than in total contributions. Many of the lower-income occupations still donate a significant amount of money to committees, indicating that they are contributing a proportionally higher amount of their income than some higher-income individuals.
 
 ### Find the partisanship by occupation
 ```{r}
@@ -178,8 +178,13 @@ ggplot(partisanship_gathered, aes(x = occupation, y = num_committees, fill = par
 
 ```
 
+
 We found that specific occupations tended to be more Democratic in their donations such as Social Workers and Software Engineers. As for tending more Republican (at least in the way they spend their money) we have Constrution Workers, Ranchers, and Anesthesiologists. However, we cannot conclude anything about the partisanship of different income brackets, but if we looked at more occupations perhaps such a conclusion could be drawn.
 
+From this group of 18 occupations, there does not appear to be a significant enough difference in overall partisanship between each income level to determine an overall trend, but there are some interesting jobs that particularly stand out. Social workers are the most democratic occupation by far, followed by software engineers, and anesthesiologists are particularly republican within their income category. It appears that the jobs that are more focused on the hard labor industry (construction and the related contractor, farmer, and rancher) are also more republican than their counterparts within their income level.
+
+
+Overall, we've seen that 1) The most money given to committees comes from high-income individuals, and so those high-income occupations have the most impact on candidate fundraising, 2) Lower and middle income workers tend to give a median donation that is very close to many high-income workers, meaning that they are actually donating *more* relative to their income level, and 3) There is no clear trend in partisanship across the income levels of these 18 occupations, but hard-labor oriented jobs did tend to be more republican than other jobs within the same income bracket.
 
 
 
